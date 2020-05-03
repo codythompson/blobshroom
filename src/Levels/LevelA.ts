@@ -22,6 +22,7 @@ export const LevelA: LevelBuilder = LevelBuilder.start()
       "heroblob"
     );
     heroBlob.tint = 0xff0f0000;
+    scene.cameras.main.startFollow(heroBlob)
 
     const pCtl:PlayerController = level.addPlayerController(heroBlob)
     pCtl.locked = true

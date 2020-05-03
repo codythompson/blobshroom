@@ -15,7 +15,6 @@ export class PlayerController extends SpriteController {
   public jumpKey: Phaser.Input.Keyboard.Key;
 
   public locked: boolean = false
-  public cameraFollows: boolean = true
 
   private _maxXVel: number = 400;
   private _maxYVel: number = 400;
@@ -83,9 +82,5 @@ export class PlayerController extends SpriteController {
     if (!this.locked) {
       this.updatePhysicsSetttings()
     }
-
-    const cam:Phaser.Cameras.Scene2D.Camera = this.scene.cameras.main
-    cam.centerOn(this.sprite.x, this.sprite.y)
-    // this.scene.cameras.main.setPosition(this.sprite.x, this.sprite.y)
   }
 }

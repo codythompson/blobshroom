@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --config publish.webpack.config.js",
     "dev": "webpack-dev-server",
     "prep": "git add . && prettier --write src"
   },
