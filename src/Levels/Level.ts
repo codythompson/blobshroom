@@ -3,6 +3,8 @@ import Phaser from "phaser";
 import { SpriteController, PlayerController } from "../SpriteController";
 
 export class Level {
+  public tilemap: Phaser.Tilemaps.Tilemap | null = null
+  public worldLayer: Phaser.Tilemaps.StaticTilemapLayer|null = null
   public controllers: SpriteController[] = [];
   public platforms: Phaser.Physics.Arcade.StaticGroup | null = null;
   public scene: Phaser.Scene | null = null;

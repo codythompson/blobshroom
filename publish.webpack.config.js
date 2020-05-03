@@ -43,6 +43,10 @@ module.exports = {
         to: path.resolve(__dirname, 'dist')
       },
       {
+        from: path.resolve(__dirname, 'assets/tilemaps', '*'),
+        to: path.resolve(__dirname, 'dist')
+      },
+      {
         from: path.resolve(__dirname, 'assets/audio/ogg', '*'),
         to: path.resolve(__dirname, 'dist')
       }
