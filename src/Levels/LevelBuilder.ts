@@ -1,6 +1,6 @@
 import { Level } from "./Level";
 
-export type ImageInfo = {
+export type AssetInfo = {
   name: string;
   path: string;
 };
@@ -19,12 +19,19 @@ export class LevelBuilder {
   public level: Level | null = null;
   public onPreload: ((level: Level) => void) | null = null;
   public onCreate: ((level: Level) => void) | null = null;
-  public images: ImageInfo[] = [];
+  public onUpdate: ((level: Level) => void) | null = null;
+  public images: AssetInfo[] = [];
+  public sounds: AssetInfo[] = [];
   public platforms: PlatformInfo[] = [];
 
   image(name: string, path: string): LevelBuilder {
     this.images.push({ name, path });
-    return this;
+    return this
+  }
+
+  sound(name: string, path: string): LevelBuilder {
+    this.sounds.push({name, path})
+    return this
   }
 
   platform(x: number, y: number, texture: string): LevelBuilder {
@@ -48,7 +55,7 @@ export class LevelBuilder {
   on(event: string, callback: (level: Level) => void): LevelBuilder {
     if (event == "preload") {
       this.onPreload = callback;
-    } else if (event == "onCreate") {
+    } else if (event == "create") {
       this.onCreate = callback;
     }
     return this;
@@ -61,6 +68,9 @@ export class LevelBuilder {
       for (let imgInfo of this.images) {
         level.scene?.load.image(imgInfo.name, imgInfo.path);
       }
+      for (let soundInfo of this.sounds) {
+        level.scene?.load.audio(soundInfo.name, soundInfo.path)
+      }
     });
     if (this.onPreload != null) {
       level.onPreload.push(this.onPreload);
@@ -71,6 +81,9 @@ export class LevelBuilder {
         level.addPlatform(platInfo.x, platInfo.y, platInfo.texture);
       }
     });
+    if (this.onCreate != null) {
+      level.onCreate.push(this.onCreate);
+    }
 
     return level;
   }

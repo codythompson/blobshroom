@@ -14,6 +14,9 @@ export class PlayerController extends SpriteController {
   public rightKey: Phaser.Input.Keyboard.Key;
   public jumpKey: Phaser.Input.Keyboard.Key;
 
+  public locked: boolean = false
+  public cameraFollows: boolean = true
+
   private _maxXVel: number = 400;
   private _maxYVel: number = 400;
   public minXVel: number = 300;
@@ -51,7 +54,7 @@ export class PlayerController extends SpriteController {
     }
   }
 
-  update(elapsed: number, delta: number): void {
+  updatePhysicsSetttings() {
     const directionIsLeft: boolean | null = this.directionIsLeft();
     if (directionIsLeft == null) {
       // no horizontal keys are down
@@ -74,5 +77,15 @@ export class PlayerController extends SpriteController {
     if (this.jumpKey.isDown) {
       this.sprite.setVelocityY(this.jumpInitialVel);
     }
+  }
+
+  update(elapsed: number, delta: number): void {
+    if (!this.locked) {
+      this.updatePhysicsSetttings()
+    }
+
+    const cam:Phaser.Cameras.Scene2D.Camera = this.scene.cameras.main
+    cam.centerOn(this.sprite.x, this.sprite.y)
+    // this.scene.cameras.main.setPosition(this.sprite.x, this.sprite.y)
   }
 }

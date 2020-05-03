@@ -26,28 +26,6 @@ const gaem = new Phaser.Game({
     },
     create: function () {
       activeLevel.create();
-      const scene: Phaser.Scene = gaem.scene.getScene("default");
-      // const platforms:Phaser.Physics.Arcade.StaticGroup = scene.physics.add.staticGroup()
-
-      const padding = 128;
-      const w = 64;
-      // for (let i:number = 0; i < 12; i++) {
-      //   platforms.create(padding + (i*w), scene.cameras.main.height - (w/2), "block")
-      // }
-
-      const heroBlob: Phaser.Physics.Arcade.Sprite = scene.physics.add.sprite(
-        scene.cameras.main.centerX,
-        scene.cameras.main.height - w - w / 2 - padding,
-        "heroblob"
-      );
-      heroBlob.tint = 0xff0f0000;
-
-      activeLevel.addPlayerController(heroBlob);
-
-      scene.physics.add.collider(
-        heroBlob,
-        activeLevel.platforms as Phaser.Physics.Arcade.StaticGroup
-      );
     },
     update(elapsed: number, delta: number) {
       activeLevel.update(elapsed, delta);
