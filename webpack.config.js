@@ -20,7 +20,7 @@ module.exports = {
     ]
   },
 
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
 
   resolve: {
     extensions: [ '.ts', '.tsx', '.js' ]
@@ -47,6 +47,10 @@ module.exports = {
       },
       {
         from: path.resolve(__dirname, 'assets/png', '*'),
+        to: path.resolve(__dirname, 'dist')
+      },
+      {
+        from: path.resolve(__dirname, 'assets/ogg', '*'),
         to: path.resolve(__dirname, 'dist')
       }
     ]),
