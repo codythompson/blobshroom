@@ -35,8 +35,8 @@ module.exports = {
 
   devServer: {
     contentBase: path.resolve(__dirname, 'dist'),
-    https: true,
-    host: '192.168.0.12'
+    // https: true,
+    host: process.env.WSL_HOST ? process.env.WSL_HOST : '127.0.0.1'
   },
 
   plugins: [
