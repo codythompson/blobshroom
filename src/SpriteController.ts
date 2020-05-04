@@ -17,14 +17,14 @@ export class PlayerController extends SpriteController {
   public locked: boolean = false
 
   private _maxXVel: number = 400;
-  private _maxYVel: number = 400;
+  private _maxYVel: number = 600;
   public minXVel: number = 300;
 
   private _lastKeyWasLeft: boolean = false;
 
   public xAccel: number = 300;
   // public stopAccel: number = -30
-  public jumpInitialVel: number = -300;
+  public jumpInitialVel: number = -600;
 
   constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Arcade.Sprite) {
     super(scene, sprite);
@@ -73,7 +73,7 @@ export class PlayerController extends SpriteController {
       this.sprite.setAccelerationX(this.xAccel);
     }
 
-    if (this.jumpKey.isDown) {
+    if (this.jumpKey.isDown && this.sprite.body.blocked.down) {
       this.sprite.setVelocityY(this.jumpInitialVel);
     }
   }
