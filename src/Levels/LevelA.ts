@@ -1,3 +1,7 @@
+import Phaser from "phaser"
+import Sprite = Phaser.Physics.Arcade.Sprite
+import StaticGroup = Phaser.Physics.Arcade.StaticGroup
+
 import { LevelBuilder } from ".";
 import { Level } from "./Level";
 import { PlayerController } from "../SpriteController";
@@ -5,6 +9,7 @@ import { PlayerController } from "../SpriteController";
 const padding = 128
 const w = 64
 const bottomIsh = 720
+let pCtl:PlayerController
 
 export const LevelA: LevelBuilder = LevelBuilder.start()
   .image("playtext", "assets/png/playtext.png")
@@ -18,7 +23,7 @@ export const LevelA: LevelBuilder = LevelBuilder.start()
   .on("create", (level:Level):void => {
     // const scene:Phaser.Scene = level.scene as Phaser.Scene
     const scene = level.gaem.scene.getScene("default")
-    const heroBlob: Phaser.Physics.Arcade.Sprite = scene.physics.add.sprite(
+    const heroBlob: Sprite = scene.physics.add.sprite(
       scene.cameras.main.centerX- padding,
       scene.cameras.main.height - w - w / 2 - padding - padding,
       "heroblob"
@@ -26,16 +31,23 @@ export const LevelA: LevelBuilder = LevelBuilder.start()
     heroBlob.tint = 0xff0f0000;
     scene.cameras.main.startFollow(heroBlob)
 
-    const pCtl:PlayerController = level.addPlayerController(heroBlob)
+    pCtl = level.addPlayerController(heroBlob)
     pCtl.locked = true
 
     scene.physics.add.collider(
       heroBlob,
-      level.platforms as Phaser.Physics.Arcade.StaticGroup
+      level.platforms as StaticGroup
     );
     if (level.worldLayer != null) {
       scene.physics.add.collider(heroBlob, level.worldLayer)
     }
+    scene.physics.add.overlap(heroBlob, level.touchables as StaticGroup, (heroBlob, touchable) => {
+      console.log("touched", touchable.data.get("touchabletype"))
+      touchable.destroy()
+    })
+  })
+  .on("createlast", (level:Level) => {
+    const scene:Phaser.Scene = level.scene as Phaser.Scene
     const playButton:Phaser.GameObjects.Image = scene.add.image(scene.cameras.main.centerX, scene.cameras.main.centerY - padding, "playtext")
     playButton.tint = 0xff90ff10
     playButton.setScrollFactor(0, -1.2)

@@ -26,6 +26,7 @@ export class LevelBuilder {
   public level: Level | null = null;
   public onPreload: ((level: Level) => void) | null = null;
   public onCreate: ((level: Level) => void) | null = null;
+  public onCreateLast: ((level: Level) => void) | null = null;
   public onUpdate: ((level: Level) => void) | null = null;
   public _tilemap: TilemapInfo|null = null
   public images: AssetInfo[] = [];
@@ -81,6 +82,8 @@ export class LevelBuilder {
       this.onPreload = callback;
     } else if (event == "create") {
       this.onCreate = callback;
+    } else if (event == "createlast") {
+      this.onCreateLast = callback;
     }
     return this;
   }
@@ -91,8 +94,9 @@ export class LevelBuilder {
     level.onPreload.push((level: Level) => {
       const scene: Phaser.Scene = level.scene as Phaser.Scene
       if (this._tilemap != null) {
-        const {tilemap, tileset} = this._tilemap
+        const {tilemap, tileset, tileWidth:frameWidth, tileHeight:frameHeight} = this._tilemap
         scene.load.image(tileset.name, tileset.path)
+        scene.load.spritesheet(`${tileset.name}_sheet`, tileset.path, {frameWidth, frameHeight})
         scene.load.tilemapTiledJSON(tilemap.name, tilemap.path)
       }
       for (let imgInfo of this.images) {
@@ -117,9 +121,26 @@ export class LevelBuilder {
           width: tileWidth,
           height: tileHeight
         })
+
+        // create the object layer (touchables powerups, etc.)
+        level.tilemap.getObjectLayer("objects").objects
+          .filter(obj => obj.name == "touchable")
+          .map((obj) => {
+            obj.x = obj.x as number
+            obj.y = obj.y as number
+            obj.width = obj.width as number
+            obj.height = obj.height as number
+            obj.gid = obj.gid as number
+            const sprite:Phaser.Physics.Arcade.Sprite = level.touchables?.create(obj.x + obj.width/2, obj.y-obj.height/2, `${tileset.name}_sheet`, obj.gid-1)
+            const touchabletype = obj.properties[0].value
+            sprite.setDataEnabled()
+            sprite.data.set("touchabletype", touchabletype)
+            return sprite
+          })
+
         tilesetImage = level.tilemap.addTilesetImage(tileset.name)
         level.worldLayer = level.tilemap.createStaticLayer("worldLayer", tilesetImage)
-        level.worldLayer.setCollisionBetween(0, 2)
+        level.worldLayer.setCollisionByExclusion([-1])
       }
       for (let platInfo of this.platforms) {
         level.addPlatform(platInfo.x, platInfo.y, platInfo.texture);
@@ -132,6 +153,9 @@ export class LevelBuilder {
       level.onCreate.push((level: Level) => {
         level.tilemap?.createStaticLayer("fgLayer", tilesetImage)
       })
+    }
+    if (this.onCreateLast != null) {
+      level.onCreate.push(this.onCreateLast)
     }
 
     return level;

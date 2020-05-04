@@ -5,8 +5,10 @@ import { SpriteController, PlayerController } from "../SpriteController";
 export class Level {
   public tilemap: Phaser.Tilemaps.Tilemap | null = null
   public worldLayer: Phaser.Tilemaps.StaticTilemapLayer|null = null
+  public objectLayer: Phaser.Tilemaps.ObjectLayer|null = null
   public controllers: SpriteController[] = [];
-  public platforms: Phaser.Physics.Arcade.StaticGroup | null = null;
+  public platforms: Phaser.Physics.Arcade.StaticGroup | null = null
+  public touchables: Phaser.Physics.Arcade.StaticGroup | null = null
   public scene: Phaser.Scene | null = null;
   public onPreload: ((level: Level) => void)[] = [];
   public onCreate: ((level: Level) => void)[] = [];
@@ -26,10 +28,11 @@ export class Level {
   }
 
   create() {
-    const scene: Phaser.Scene = this.getScene();
-    this.platforms = scene.physics.add.staticGroup();
+    const scene: Phaser.Scene = this.getScene()
+    this.platforms = scene.physics.add.staticGroup()
+    this.touchables = scene.physics.add.staticGroup()
     for (let func of this.onCreate) {
-      func(this);
+      func(this)
     }
   }
 
