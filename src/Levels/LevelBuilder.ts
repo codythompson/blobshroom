@@ -39,12 +39,12 @@ export class LevelBuilder {
   public onCreate: ((level: Level) => void) | null = null;
   public onCreateLast: ((level: Level) => void) | null = null;
   public onUpdate: ((level: Level) => void) | null = null;
-  public _tilemap: TilemapInfo|null = null
+  public _tilemap: TilemapInfo | null = null
   public images: AssetInfo[] = [];
   public sounds: AssetInfo[] = [];
   public platforms: PlatformInfo[] = [];
 
-  tilemap(csvName: string, csvPath:string, tilesetName: string, tilesetPath: string, tileWidth:number=32, tileHeight:number=32): LevelBuilder {
+  tilemap(csvName: string, csvPath: string, tilesetName: string, tilesetPath: string, tileWidth: number = 32, tileHeight: number = 32): LevelBuilder {
     this._tilemap = {
       tilemap: {
         name: csvName,
@@ -66,7 +66,7 @@ export class LevelBuilder {
   }
 
   sound(name: string, path: string): LevelBuilder {
-    this.sounds.push({name, path})
+    this.sounds.push({ name, path })
     return this
   }
 
@@ -132,11 +132,11 @@ export class LevelBuilder {
         .forEach((obj) => {
           obj.x = obj.x as number
           obj.y = obj.y as number
-          switch(obj.type) {
+          switch (obj.type) {
             case "object":
               let baseObj: TiledBaseObj
               try {
-               baseObj = new TiledBaseObj(obj.properties)
+                baseObj = new TiledBaseObj(obj.properties)
               } catch (e) {
                 throw new Error(`Error in level: "${tilemap.path}" in obj. ${obj.name} at ${obj.x},${obj.y}: ${e.message}`)
               }
@@ -154,7 +154,7 @@ export class LevelBuilder {
               } else {
                 physGroup = level.touchables as Phaser.Physics.Arcade.StaticGroup
               }
-              const sprite: Phaser.Physics.Arcade.Sprite = physGroup.create(obj.x + obj.width/2, obj.y+obj.width/2, `${baseObj.key}_sheet`, baseObj.frame)
+              const sprite: Phaser.Physics.Arcade.Sprite = physGroup.create(obj.x + obj.width / 2, obj.y + obj.width / 2, `${baseObj.key}_sheet`, baseObj.frame)
               sprite.setDataEnabled()
               sprite.data.set("originalProps", obj.properties)
               sprite.data.set("objectData", baseObj)
@@ -166,27 +166,15 @@ export class LevelBuilder {
               level.hero = scene.physics.add.sprite(obj.x, obj.y, HERO_ASSET_INFO.name)
               level.hero.tint = HERO_TINT
               level.heroController = level.addPlayerController(level.hero)
+              scene.cameras.main.startFollow(level.hero)
               break
             default:
               throw new Error(`Unknown object type "${obj.name}":"${obj.type}" encountered in map ${tilemap.path} at position ${obj.x},${obj.y}`)
           }
         })
-        if (level.hero == null) {
-          throw new Error(`no spawn point found in level: ${tilemap.path}`)
-        }
-        // .filter(obj => obj.name == "touchable")
-        // .map((obj) => {
-        //   obj.x = obj.x as number
-        //   obj.y = obj.y as number
-        //   obj.width = obj.width as number
-        //   obj.height = obj.height as number
-        //   obj.gid = obj.gid as number
-        //   const sprite: Phaser.Physics.Arcade.Sprite = level.touchables?.create(obj.x + obj.width / 2, obj.y - obj.height / 2, `${tileset.name}_sheet`, obj.gid - 1)
-        //   const touchabletype = obj.properties[0].value
-        //   sprite.setDataEnabled()
-        //   sprite.data.set("touchabletype", touchabletype)
-        //   return sprite
-        // })
+      if (level.hero == null) {
+        throw new Error(`no spawn point found in level: ${tilemap.path}`)
+      }
 
       level.tileset = level.tilemap.addTilesetImage(tileset.name)
       level.worldLayer = level.tilemap.createStaticLayer("worldLayer", level.tileset)
@@ -197,7 +185,7 @@ export class LevelBuilder {
     }
   }
 
-  build(gaem: Phaser.Game, name: string, inventory:Inventory): Level {
+  build(gaem: Phaser.Game, name: string, inventory: Inventory): Level {
     const level: Level = new Level(gaem, name, inventory);
 
     level.onPreload.push(this._preload.bind(this))

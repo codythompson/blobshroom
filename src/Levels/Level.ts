@@ -51,7 +51,6 @@ export class Level {
     scene.physics.add.overlap(hero, this.touchables, (hero:GameObjects.GameObject, thingy:GameObjects.GameObject) => {
       handle(hero, thingy, this.inventory)
     })
-    scene.cameras.main.startFollow(hero)
   }
 
   addPlayerController(sprite: Sprite): PlayerController {

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object name="door" type="object" width="32" height="64">
+  <properties>
+   <property name="collideable" type="bool" value="true"/>
+   <property name="frame" type="int" value="4"/>
+   <property name="handler" value="door"/>
+   <property name="ignore" type="bool" value="true"/>
+   <property name="inventoryKeys" value="blue_flower"/>
+   <property name="inventoryValues" value="3"/>
+   <property name="key" value="testtileset"/>
+  </properties>
+ </object>
+</template>
