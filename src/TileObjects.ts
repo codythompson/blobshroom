@@ -3,7 +3,8 @@ import GameObject = Phaser.GameObjects.GameObject
 import { Inventory } from "./Inventory"
 
 export enum HandlerNames {
-  pickup = "pickup"
+  pickup = "pickup",
+  door = "door"
 }
 
 export const handlers = {
@@ -13,6 +14,22 @@ export const handlers = {
       inventory.addToHero(objData.inventoryKeys[i], objData.inventoryValues[i])
     }
     obj.destroy()
+  },
+  [HandlerNames.door]: function (actor:GameObject, obj:GameObject, inventory:Inventory):void {
+    const objData:TiledBaseObj = obj.data.get("objectData")
+    let hasEnough: boolean = true
+    for (let i = 0; i < objData.inventoryKeys.length; i++) {
+      if (inventory.getFromHero(objData.inventoryKeys[i]) < objData.inventoryValues[i]) {
+        hasEnough = false
+        break
+      }
+    }
+    if (hasEnough) {
+      for (let i = 0; i < objData.inventoryKeys.length; i++) {
+        inventory.removeFromHero(objData.inventoryKeys[i], objData.inventoryValues[i])
+      }
+      obj.destroy()
+    }
   }
 }
 

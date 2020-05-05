@@ -45,7 +45,9 @@ export class Level {
 
     const hero = this.hero as Sprite
     scene.physics.add.collider(hero as Sprite, this.worldLayer as StaticTilemapLayer)
-    scene.physics.add.collider(hero, this.platforms)
+    scene.physics.add.collider(hero, this.platforms, (hero:GameObjects.GameObject, thingy:GameObjects.GameObject) => {
+      handle(hero, thingy, this.inventory)
+    })
     scene.physics.add.overlap(hero, this.touchables, (hero:GameObjects.GameObject, thingy:GameObjects.GameObject) => {
       handle(hero, thingy, this.inventory)
     })

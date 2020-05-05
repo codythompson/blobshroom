@@ -149,6 +149,7 @@ export class LevelBuilder {
 
               let physGroup: Phaser.Physics.Arcade.StaticGroup
               if (baseObj.collideable) {
+                // TODO - add notion of door pair. Level has dictionary of door pairs - level.destoryDoor(someId)
                 physGroup = level.platforms as Phaser.Physics.Arcade.StaticGroup
               } else {
                 physGroup = level.touchables as Phaser.Physics.Arcade.StaticGroup

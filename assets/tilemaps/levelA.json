@@ -273,6 +273,100 @@
                  "width":32,
                  "x":128,
                  "y":672
+                }, 
+                {
+                 "height":64,
+                 "id":45,
+                 "name":"door",
+                 "properties":[
+                        {
+                         "name":"collideable",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"frame",
+                         "type":"int",
+                         "value":4
+                        }, 
+                        {
+                         "name":"handler",
+                         "type":"string",
+                         "value":"door"
+                        }, 
+                        {
+                         "name":"ignore",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"inventoryKeys",
+                         "type":"string",
+                         "value":"blue_flower"
+                        }, 
+                        {
+                         "name":"inventoryValues",
+                         "type":"string",
+                         "value":"3"
+                        }, 
+                        {
+                         "name":"key",
+                         "type":"string",
+                         "value":"testtileset"
+                        }],
+                 "rotation":0,
+                 "type":"object",
+                 "visible":true,
+                 "width":32,
+                 "x":32,
+                 "y":192
+                }, 
+                {
+                 "height":64,
+                 "id":46,
+                 "name":"door",
+                 "properties":[
+                        {
+                         "name":"collideable",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"frame",
+                         "type":"int",
+                         "value":8
+                        }, 
+                        {
+                         "name":"handler",
+                         "type":"string",
+                         "value":"door"
+                        }, 
+                        {
+                         "name":"ignore",
+                         "type":"bool",
+                         "value":false
+                        }, 
+                        {
+                         "name":"inventoryKeys",
+                         "type":"string",
+                         "value":"blue_flower"
+                        }, 
+                        {
+                         "name":"inventoryValues",
+                         "type":"string",
+                         "value":"3"
+                        }, 
+                        {
+                         "name":"key",
+                         "type":"string",
+                         "value":"testtileset"
+                        }],
+                 "rotation":0,
+                 "type":"object",
+                 "visible":true,
+                 "width":32,
+                 "x":320,
+                 "y":544
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -293,7 +387,7 @@
          "y":0
         }],
  "nextlayerid":4,
- "nextobjectid":44,
+ "nextobjectid":47,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.3.4",

@@ -10,7 +10,7 @@ export class Inventory {
 
   getFromHero(slot: string): number {
     if (!(slot in this.hero)) {
-      return NaN
+      return 0
     }
     return this.hero[slot]
   }
