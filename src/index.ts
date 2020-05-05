@@ -3,8 +3,11 @@ import { globalize } from "./globalize";
 
 import { LevelA } from "./Levels";
 import { Level } from "./Levels";
+import { Inventory } from "./Inventory";
 
 let activeLevel: Level;
+
+const inventory = new Inventory()
 
 const gaem = new Phaser.Game({
   width: 1200,
@@ -18,11 +21,8 @@ const gaem = new Phaser.Game({
   },
   scene: {
     preload: function () {
-      activeLevel = LevelA.build(gaem, "default");
+      activeLevel = LevelA.build(gaem, "default", inventory);
       activeLevel.preload();
-      // const scene:Phaser.Scene = gaem.scene.getScene("default")
-      // scene.load.image("block", "assets/png/blockA.png")
-      // scene.load.image("heroblob", "assets/png/heroblob2.png")
     },
     create: function () {
       activeLevel.create();
@@ -32,4 +32,7 @@ const gaem = new Phaser.Game({
     },
   },
 });
+
+// create global vars for debugging
 globalize("gaem", gaem);
+globalize("inventory", inventory);

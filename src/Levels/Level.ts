@@ -1,19 +1,27 @@
-import Phaser from "phaser";
+import Phaser, { GameObjects } from "phaser";
+import Sprite = Phaser.Physics.Arcade.Sprite
+import StaticGroup = Phaser.Physics.Arcade.StaticGroup
+import StaticTilemapLayer = Phaser.Tilemaps.StaticTilemapLayer
 
 import { SpriteController, PlayerController } from "../SpriteController";
+import { Inventory } from "../Inventory";
+import { handle } from "../TileObjects";
 
 export class Level {
+  public hero: Sprite | null = null
+  public heroController: PlayerController | null = null
   public tilemap: Phaser.Tilemaps.Tilemap | null = null
-  public worldLayer: Phaser.Tilemaps.StaticTilemapLayer|null = null
+  public tileset: Phaser.Tilemaps.Tileset | null = null
+  public worldLayer: StaticTilemapLayer|null = null
   public objectLayer: Phaser.Tilemaps.ObjectLayer|null = null
   public controllers: SpriteController[] = [];
-  public platforms: Phaser.Physics.Arcade.StaticGroup | null = null
-  public touchables: Phaser.Physics.Arcade.StaticGroup | null = null
+  public platforms: StaticGroup | null = null
+  public touchables: StaticGroup | null = null
   public scene: Phaser.Scene | null = null;
   public onPreload: ((level: Level) => void)[] = [];
   public onCreate: ((level: Level) => void)[] = [];
 
-  constructor(public gaem: Phaser.Game, public name: string) {}
+  constructor(public gaem: Phaser.Game, public name: string, public inventory: Inventory) {}
 
   getScene(): Phaser.Scene {
     return this.scene as Phaser.Scene;
@@ -34,9 +42,17 @@ export class Level {
     for (let func of this.onCreate) {
       func(this)
     }
+
+    const hero = this.hero as Sprite
+    scene.physics.add.collider(hero as Sprite, this.worldLayer as StaticTilemapLayer)
+    scene.physics.add.collider(hero, this.platforms)
+    scene.physics.add.overlap(hero, this.touchables, (hero:GameObjects.GameObject, thingy:GameObjects.GameObject) => {
+      handle(hero, thingy, this.inventory)
+    })
+    scene.cameras.main.startFollow(hero)
   }
 
-  addPlayerController(sprite: Phaser.Physics.Arcade.Sprite): PlayerController {
+  addPlayerController(sprite: Sprite): PlayerController {
     const scene: Phaser.Scene = this.getScene();
     const controller = new PlayerController(scene, sprite);
     this.controllers.push(controller);
