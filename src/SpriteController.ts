@@ -20,7 +20,8 @@ export class PlayerController extends SpriteController {
   private _maxYVel: number = 600;
   public minXVel: number = 300;
 
-  private _lastKeyWasLeft: boolean = false;
+  private _lastKeyWasLeft: boolean = false
+  private _jumpReleased: boolean = true
 
   public xAccel: number = 300;
   // public stopAccel: number = -30
@@ -73,7 +74,10 @@ export class PlayerController extends SpriteController {
       this.sprite.setAccelerationX(this.xAccel);
     }
 
-    if (this.jumpKey.isDown && this.sprite.body.blocked.down) {
+    if (this.jumpKey.isUp) {
+      this._jumpReleased = true
+    } else if (this.jumpKey.isDown && this.sprite.body.blocked.down && this._jumpReleased) {
+      this._jumpReleased = false
       this.sprite.setVelocityY(this.jumpInitialVel);
     }
   }
