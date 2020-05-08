@@ -1,9 +1,9 @@
 import Phaser from "phaser"
 
 import { Level } from "./Level";
-import { Inventory } from "../Inventory";
-import { TiledBaseObj } from "../TileObjects";
-import { PlayerController } from "../SpriteController";
+import { Inventory } from "./Inventory";
+import { TiledBaseObj } from "./TileObjects";
+import { PlayerController } from "./SpriteController";
 
 export type AssetInfo = {
   name: string

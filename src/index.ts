@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import { globalize } from "./globalize";
 
 import { LevelA } from "./Levels";
-import { Level } from "./Levels";
+import { Level } from "./Level";
 import { Inventory } from "./Inventory";
 
 let activeLevel: Level;

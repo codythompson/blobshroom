@@ -3,9 +3,9 @@ import Sprite = Phaser.Physics.Arcade.Sprite
 import StaticGroup = Phaser.Physics.Arcade.StaticGroup
 import StaticTilemapLayer = Phaser.Tilemaps.StaticTilemapLayer
 
-import { SpriteController, PlayerController } from "../SpriteController";
-import { Inventory } from "../Inventory";
-import { handle } from "../TileObjects";
+import { SpriteController, PlayerController } from "./SpriteController";
+import { Inventory } from "./Inventory";
+import { handle } from "./TileObjects";
 
 export class Level {
   public hero: Sprite | null = null
