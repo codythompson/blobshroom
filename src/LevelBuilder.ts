@@ -152,9 +152,17 @@ export class LevelBuilder {
                 // TODO - add notion of door pair. Level has dictionary of door pairs - level.destoryDoor(someId)
                 physGroup = level.platforms as Phaser.Physics.Arcade.StaticGroup
               } else {
+                // TODO: figure this out
                 physGroup = level.touchables as Phaser.Physics.Arcade.StaticGroup
               }
-              const sprite: Phaser.Physics.Arcade.Sprite = physGroup.create(obj.x + obj.width / 2, obj.y + obj.width / 2, `${baseObj.key}_sheet`, baseObj.frame)
+              let sprite: Phaser.GameObjects.GameObject
+              if (baseObj.frameBelow == null) {
+                sprite = physGroup.create(obj.x + obj.width / 2, obj.y + obj.width / 2, `${baseObj.key}_sheet`, baseObj.frame)
+              } else {
+                sprite = scene.add.container(obj.x, obj.y)
+                const main = scene.add.sprite(0, 0, baseObj.key, baseObj.frame)
+                main.setDisplayOrigin(-1, 1)
+              }
               sprite.setDataEnabled()
               sprite.data.set("originalProps", obj.properties)
               sprite.data.set("objectData", baseObj)

@@ -41,6 +41,60 @@ export function handle(actor:GameObject, obj:GameObject, inventory:Inventory):vo
   handlers[objData.handler](actor, obj, inventory)
 }
 
+export type ObjConfig = {
+  key: string
+  frame: number
+  frameBelow: number|null
+  collideable: boolean
+  inventoryKeys: string[]
+  inventoryValues: number[]
+  handler: HandlerNames
+}
+
+/**
+ * object config
+ * naming conventions
+ * 
+ * OBJ_CONFIG_NAME$variant
+ */
+
+export const BLUE_FLOWER$1:ObjConfig = {
+  key: "testtileset",
+  frame: 4,
+  frameBelow: null,
+  collideable: false,
+  inventoryKeys: ["blue_flower"],
+  inventoryValues: [1],
+  handler: HandlerNames.pickup
+}
+
+export const BLUE_FLOWER$2:ObjConfig = {
+  inventoryValues: [2],
+  ...BLUE_FLOWER$1
+}
+
+export const BLUE_FLOWER_DOOR$1:ObjConfig = {
+  key: "testtileset",
+  frame: 1,
+  frameBelow: 9,
+  collideable: true,
+  inventoryKeys: ["blue_flower"],
+  inventoryValues: [1],
+  handler: HandlerNames.pickup
+}
+
+export const BLUE_FLOWER_DOOR$2:ObjConfig = {
+  inventoryValues: [2],
+  ...BLUE_FLOWER_DOOR$1
+}
+
+export const CONFIGS:any = {
+  BLUE_FLOWER$1,
+  BLUE_FLOWER$2,
+  BLUE_FLOWER_DOOR$1,
+  BLUE_FLOWER_DOOR$2
+}
+
 export type TiledProp = {
   name: string
   value: boolean|string|number
@@ -49,6 +103,7 @@ export type TiledProp = {
 export class TiledBaseObj {
   key!: string
   frame!: number
+  frameBelow!: number|null
   ignore!: boolean
   collideable!: boolean
   inventoryKeys!: string[]
@@ -56,39 +111,56 @@ export class TiledBaseObj {
   handler!: HandlerNames
 
   constructor(props: TiledProp[]) {
-    for (let prop of props) {
-      switch (prop.name) {
-        case "key":
-          this.key = prop.value as string
-          break;
-        case "frame":
-          this.frame = prop.value as number
-          break;
-        case "ignore":
-          this.ignore = prop.value as boolean
-          break;
-        case "collideable":
-          this.collideable = prop.value as boolean
-          break;
-        case "inventoryKeys":
-          this.inventoryKeys = (prop.value as string)
-            .trim()
-            .split(",")
-          break;
-        case "inventoryValues":
-          this.inventoryValues = (prop.value as string)
-            .trim()
-            .split(",")
-            .map(str => parseInt(str))
-          break;
-        case "handler":
-          this.handler = prop.value as HandlerNames
-          break;
-      }
+    let configKeyProp:TiledProp|undefined = props.find(prop => prop.name == "configKey")
+    if (configKeyProp == undefined) {
+      throw new Error("TiledObject missing 'configKey' property")
+    }
+    const configKey:string = configKeyProp.value as string
+    if (!(configKey in CONFIGS)) {
+      throw new Error(`Unknown configKey ${configKey}`)
+    }
+    const config:ObjConfig = CONFIGS[configKey]
+    // TODO figure out a more typescripty way to do this
+    for(let propName in config) {
+      // if (propName in TiledBaseObj) {
+        (this as any)[propName] = (config as any)[propName]
+      // }
     }
 
-    if (this.inventoryKeys.length != this.inventoryValues.length) {
-      throw new Error(`Number of values doesn't match number of keys. ${this.inventoryKeys.length} vs ${this.inventoryValues.length}`)
-    }
+    // todo: redo this part so that config values can be overridden
+    // for (let prop of props) {
+    //   switch (prop.name) {
+    //     case "key":
+    //       this.key = prop.value as string
+    //       break;
+    //     case "frame":
+    //       this.frame = prop.value as number
+    //       break;
+    //     case "ignore":
+    //       this.ignore = prop.value as boolean
+    //       break;
+    //     case "collideable":
+    //       this.collideable = prop.value as boolean
+    //       break;
+    //     case "inventoryKeys":
+    //       this.inventoryKeys = (prop.value as string)
+    //         .trim()
+    //         .split(",")
+    //       break;
+    //     case "inventoryValues":
+    //       this.inventoryValues = (prop.value as string)
+    //         .trim()
+    //         .split(",")
+    //         .map(str => parseInt(str))
+    //       break;
+    //     case "handler":
+    //       this.handler = prop.value as HandlerNames
+    //       break;
+    //   }
+    // }
+
+    // if (this.inventoryKeys.length != this.inventoryValues.length) {
+    //   throw new Error(`Number of values doesn't match number of keys. ${this.inventoryKeys.length} vs ${this.inventoryValues.length}`)
+    // }
   }
 }
