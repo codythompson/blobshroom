@@ -69,23 +69,23 @@ export const BLUE_FLOWER$1:ObjConfig = {
 }
 
 export const BLUE_FLOWER$2:ObjConfig = {
-  inventoryValues: [2],
-  ...BLUE_FLOWER$1
+  ...BLUE_FLOWER$1,
+  inventoryValues: [2]
 }
 
 export const BLUE_FLOWER_DOOR$1:ObjConfig = {
   key: "testtileset",
-  frame: 1,
-  frameBelow: 9,
+  frame: 3,
+  frameBelow: 11,
   collideable: true,
   inventoryKeys: ["blue_flower"],
   inventoryValues: [1],
-  handler: HandlerNames.pickup
+  handler: HandlerNames.door
 }
 
 export const BLUE_FLOWER_DOOR$2:ObjConfig = {
-  inventoryValues: [2],
-  ...BLUE_FLOWER_DOOR$1
+  ...BLUE_FLOWER_DOOR$1,
+  inventoryValues: [2]
 }
 
 export const CONFIGS:any = {
@@ -122,45 +122,47 @@ export class TiledBaseObj {
     const config:ObjConfig = CONFIGS[configKey]
     // TODO figure out a more typescripty way to do this
     for(let propName in config) {
-      // if (propName in TiledBaseObj) {
+      // if (this.hasOwnProperty(propName)) {
         (this as any)[propName] = (config as any)[propName]
       // }
     }
 
-    // todo: redo this part so that config values can be overridden
-    // for (let prop of props) {
-    //   switch (prop.name) {
-    //     case "key":
-    //       this.key = prop.value as string
-    //       break;
-    //     case "frame":
-    //       this.frame = prop.value as number
-    //       break;
-    //     case "ignore":
-    //       this.ignore = prop.value as boolean
-    //       break;
-    //     case "collideable":
-    //       this.collideable = prop.value as boolean
-    //       break;
-    //     case "inventoryKeys":
-    //       this.inventoryKeys = (prop.value as string)
-    //         .trim()
-    //         .split(",")
-    //       break;
-    //     case "inventoryValues":
-    //       this.inventoryValues = (prop.value as string)
-    //         .trim()
-    //         .split(",")
-    //         .map(str => parseInt(str))
-    //       break;
-    //     case "handler":
-    //       this.handler = prop.value as HandlerNames
-    //       break;
-    //   }
-    // }
+    for (let prop of props) {
+      switch (prop.name) {
+        case "key":
+          this.key = prop.value as string
+          break;
+        case "frame":
+          this.frame = prop.value as number
+          break;
+        case "frameBelow":
+          this.frameBelow = prop.value as number
+          break;
+        case "ignore":
+          this.ignore = prop.value as boolean
+          break;
+        case "collideable":
+          this.collideable = prop.value as boolean
+          break;
+        case "inventoryKeys":
+          this.inventoryKeys = (prop.value as string)
+            .trim()
+            .split(",")
+          break;
+        case "inventoryValues":
+          this.inventoryValues = (prop.value as string)
+            .trim()
+            .split(",")
+            .map(str => parseInt(str))
+          break;
+        case "handler":
+          this.handler = prop.value as HandlerNames
+          break;
+      }
+    }
 
-    // if (this.inventoryKeys.length != this.inventoryValues.length) {
-    //   throw new Error(`Number of values doesn't match number of keys. ${this.inventoryKeys.length} vs ${this.inventoryValues.length}`)
-    // }
+    if (this.inventoryKeys.length != this.inventoryValues.length) {
+      throw new Error(`Number of values doesn't match number of keys. ${this.inventoryKeys.length} vs ${this.inventoryValues.length}`)
+    }
   }
 }

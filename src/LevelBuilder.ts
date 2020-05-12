@@ -3,7 +3,6 @@ import Phaser from "phaser"
 import { Level } from "./Level";
 import { Inventory } from "./Inventory";
 import { TiledBaseObj } from "./TileObjects";
-import { PlayerController } from "./SpriteController";
 
 export type AssetInfo = {
   name: string
@@ -149,19 +148,22 @@ export class LevelBuilder {
 
               let physGroup: Phaser.Physics.Arcade.StaticGroup
               if (baseObj.collideable) {
-                // TODO - add notion of door pair. Level has dictionary of door pairs - level.destoryDoor(someId)
                 physGroup = level.platforms as Phaser.Physics.Arcade.StaticGroup
               } else {
-                // TODO: figure this out
                 physGroup = level.touchables as Phaser.Physics.Arcade.StaticGroup
               }
               let sprite: Phaser.GameObjects.GameObject
               if (baseObj.frameBelow == null) {
-                sprite = physGroup.create(obj.x + obj.width / 2, obj.y + obj.width / 2, `${baseObj.key}_sheet`, baseObj.frame)
+                sprite = physGroup.create(obj.x + obj.width / 2, obj.y + obj.height / 2, `${baseObj.key}_sheet`, baseObj.frame)
               } else {
-                sprite = scene.add.container(obj.x, obj.y)
-                const main = scene.add.sprite(0, 0, baseObj.key, baseObj.frame)
-                main.setDisplayOrigin(-1, 1)
+                const container:Phaser.GameObjects.Container = scene.add.container(obj.x + obj.width / 2, obj.y + obj.height / 2)
+                container.setSize(obj.width, obj.height)
+                physGroup.add(container)
+                sprite = container
+                // this is hardcoded for a double tall asset
+                const main = scene.add.sprite(0, -obj.height/4, `${baseObj.key}_sheet`, baseObj.frame)
+                const below = scene.add.sprite(0, obj.height/4, `${baseObj.key}_sheet`, baseObj.frameBelow)
+                container.add([main, below])
               }
               sprite.setDataEnabled()
               sprite.data.set("originalProps", obj.properties)
