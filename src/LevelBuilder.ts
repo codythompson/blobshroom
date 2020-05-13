@@ -15,6 +15,9 @@ export const HERO_ASSET_INFO = {
 }
 export const HERO_TINT = 0xff0f0000;
 
+const SOLID_PLATFORM_INDEX = 5
+const JUMP_THROUGH_PLATFORM_INDEX = 56
+
 export type PlatformInfo = {
   x: number;
   y: number;
@@ -188,7 +191,15 @@ export class LevelBuilder {
 
       level.tileset = level.tilemap.addTilesetImage(tileset.name)
       level.worldLayer = level.tilemap.createStaticLayer("worldLayer", level.tileset)
-      level.worldLayer.setCollisionByExclusion([-1])
+      // level.worldLayer.setCollisionByExclusion([-1]);
+      level.worldLayer.forEachTile((tile:Phaser.Tilemaps.Tile) => {
+        if (tile.index == SOLID_PLATFORM_INDEX) {
+          tile.setCollision(true)
+        } else if (tile.index == JUMP_THROUGH_PLATFORM_INDEX) {
+          console.log('mad')
+          tile.setCollision(false, false, true, false)
+        }
+      })
     }
     for (let platInfo of this.platforms) {
       level.addPlatform(platInfo.x, platInfo.y, platInfo.texture);
