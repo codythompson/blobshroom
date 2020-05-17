@@ -12,8 +12,7 @@ export class Level {
   public heroController: PlayerController | null = null
   public tilemap: Phaser.Tilemaps.Tilemap | null = null
   public tileset: Phaser.Tilemaps.Tileset | null = null
-  public worldLayer: StaticTilemapLayer|null = null
-  public objectLayer: Phaser.Tilemaps.ObjectLayer|null = null
+  public collisionLayer: StaticTilemapLayer|null = null
   public controllers: SpriteController[] = [];
   public platforms: StaticGroup | null = null
   public touchables: StaticGroup | null = null
@@ -44,7 +43,7 @@ export class Level {
     }
 
     const hero = this.hero as Sprite
-    scene.physics.add.collider(hero as Sprite, this.worldLayer as StaticTilemapLayer)
+    scene.physics.add.collider(hero as Sprite, this.collisionLayer as StaticTilemapLayer)
     scene.physics.add.collider(hero, this.platforms, (hero:GameObjects.GameObject, thingy:GameObjects.GameObject) => {
       handle(hero, thingy, this.inventory)
     })
@@ -60,6 +59,7 @@ export class Level {
     return controller;
   }
 
+  // TODO move this to level builder
   addPlatform(x: number, y: number, texture: string): any {
     return this.platforms?.create(x, y, texture);
   }

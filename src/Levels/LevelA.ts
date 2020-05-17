@@ -11,6 +11,10 @@ export const LevelA: LevelBuilder = LevelBuilder.start()
   .image("block", "assets/png/blockA.png")
   .image("weirdblock", "assets/png/weirdblock.png")
   .tilemap("levelA", "assets/tilemaps/levelA.json", "testtileset", "assets/png/testtileset.png")
+  .fgLayer("fg")
+  .bgLayer("bg")
+  .bgLayer("plax1", 1/64)
+  .bgLayer("plax2", 1/128)
   .sound("level1_soundtrack", "assets/audio/ogg/King James VR - Drunkbus.ogg")
   .on("createlast", (level:Level) => {
     const scene:Phaser.Scene = level.scene as Phaser.Scene

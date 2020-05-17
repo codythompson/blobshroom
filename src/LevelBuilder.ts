@@ -31,6 +31,12 @@ export type TilemapInfo = {
   tileHeight: number
 }
 
+export type LayerInfo = {
+  name: string
+  scrollFactorX: number
+  scrollFactorY: number
+}
+
 export class LevelBuilder {
   static start(): LevelBuilder {
     return new LevelBuilder();
@@ -42,9 +48,11 @@ export class LevelBuilder {
   public onCreateLast: ((level: Level) => void) | null = null;
   public onUpdate: ((level: Level) => void) | null = null;
   public _tilemap: TilemapInfo | null = null
-  public images: AssetInfo[] = [];
-  public sounds: AssetInfo[] = [];
-  public platforms: PlatformInfo[] = [];
+  public fgLayers: LayerInfo[] = []
+  public bgLayers: LayerInfo[] = []
+  public images: AssetInfo[] = []
+  public sounds: AssetInfo[] = []
+  public platforms: PlatformInfo[] = []
 
   tilemap(csvName: string, csvPath: string, tilesetName: string, tilesetPath: string, tileWidth: number = 32, tileHeight: number = 32): LevelBuilder {
     this._tilemap = {
@@ -59,6 +67,18 @@ export class LevelBuilder {
       tileWidth,
       tileHeight
     }
+    return this
+  }
+
+  fgLayer(name:string, scrollFactorX:number=1, scrollFactorY?:number): LevelBuilder {
+    scrollFactorY = scrollFactorY == undefined? scrollFactorX : scrollFactorY
+    this.fgLayers.push({name, scrollFactorX, scrollFactorY})
+    return this
+  }
+
+  bgLayer(name:string, scrollFactorX:number=1, scrollFactorY?:number): LevelBuilder {
+    scrollFactorY = scrollFactorY == undefined? scrollFactorX : scrollFactorY
+    this.bgLayers.unshift({name, scrollFactorX, scrollFactorY})
     return this
   }
 
@@ -129,6 +149,10 @@ export class LevelBuilder {
         height: tileHeight
       })
 
+      level.tileset = level.tilemap.addTilesetImage(tileset.name)
+
+      this.setupLayers(level, this.bgLayers)
+
       // create the object layer (touchables powerups, etc.)
       level.tilemap.getObjectLayer("objects").objects
         .forEach((obj) => {
@@ -189,14 +213,13 @@ export class LevelBuilder {
         throw new Error(`no spawn point found in level: ${tilemap.path}`)
       }
 
-      level.tileset = level.tilemap.addTilesetImage(tileset.name)
-      level.worldLayer = level.tilemap.createStaticLayer("worldLayer", level.tileset)
+      level.collisionLayer = level.tilemap.createStaticLayer("collision", level.tileset)
+      level.collisionLayer.setVisible(false)
       // level.worldLayer.setCollisionByExclusion([-1]);
-      level.worldLayer.forEachTile((tile:Phaser.Tilemaps.Tile) => {
+      level.collisionLayer.forEachTile((tile:Phaser.Tilemaps.Tile) => {
         if (tile.index == SOLID_PLATFORM_INDEX) {
           tile.setCollision(true)
         } else if (tile.index == JUMP_THROUGH_PLATFORM_INDEX) {
-          console.log('mad')
           tile.setCollision(false, false, true, false)
         }
       })
@@ -204,6 +227,23 @@ export class LevelBuilder {
     for (let platInfo of this.platforms) {
       level.addPlatform(platInfo.x, platInfo.y, platInfo.texture);
     }
+
+    this.setupLayers(level, this.fgLayers)
+
+    scene.cameras.main.setRoundPixels(true)
+    scene.cameras.main.roundPixels = true
+  }
+
+  private setupLayers(level: Level, layers: LayerInfo[]) {
+    layers.forEach(({ name, scrollFactorX, scrollFactorY }) => {
+      if (level.tilemap && level.tileset) {
+        const layer: Phaser.Tilemaps.StaticTilemapLayer = level.tilemap.createStaticLayer(name, level.tileset)
+        if (!layer) {
+          throw new Error(`Can't find layer "${name}"`)
+        }
+        layer.setScrollFactor(scrollFactorX, scrollFactorY)
+      }
+    })
   }
 
   build(gaem: Phaser.Game, name: string, inventory: Inventory): Level {
@@ -217,11 +257,6 @@ export class LevelBuilder {
     level.onCreate.push(this._create.bind(this))
     if (this.onCreate != null) {
       level.onCreate.push(this.onCreate);
-    }
-    if (this._tilemap != null) {
-      level.onCreate.push((level: Level) => {
-        level.tilemap?.createStaticLayer("fgLayer", level.tileset as Phaser.Tilemaps.Tileset)
-      })
     }
     if (this.onCreateLast != null) {
       level.onCreate.push(this.onCreateLast)
