@@ -230,6 +230,7 @@ export class LevelBuilder {
 
     this.setupLayers(level, this.fgLayers)
 
+    scene.cameras.main.setBackgroundColor(0x7a70ff)
     scene.cameras.main.setRoundPixels(true)
     scene.cameras.main.roundPixels = true
   }
