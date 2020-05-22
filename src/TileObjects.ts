@@ -1,21 +1,27 @@
 import Phaser from "phaser"
 import GameObject = Phaser.GameObjects.GameObject
 import { Inventory } from "./Inventory"
+import { Level } from "./Level"
 
 export enum HandlerNames {
+  none = "none",
   pickup = "pickup",
-  door = "door"
+  door = "door",
+  death = "death"
 }
 
 export const handlers = {
-  [HandlerNames.pickup]: function (actor:GameObject, obj:GameObject, inventory:Inventory):void {
+  [HandlerNames.none]: function (actor:GameObject, obj:GameObject, level:Level):void {},
+  [HandlerNames.pickup]: function (actor:GameObject, obj:GameObject, level:Level):void {
+    const inventory:Inventory = level.inventory
     const objData:TiledBaseObj = obj.data.get("objectData")
     for (let i = 0; i < objData.inventoryKeys.length; i++) {
       inventory.addToHero(objData.inventoryKeys[i], objData.inventoryValues[i])
     }
     obj.destroy()
   },
-  [HandlerNames.door]: function (actor:GameObject, obj:GameObject, inventory:Inventory):void {
+  [HandlerNames.door]: function (actor:GameObject, obj:GameObject, level:Level):void {
+    const inventory:Inventory = level.inventory
     const objData:TiledBaseObj = obj.data.get("objectData")
     let hasEnough: boolean = true
     for (let i = 0; i < objData.inventoryKeys.length; i++) {
@@ -30,18 +36,22 @@ export const handlers = {
       }
       obj.destroy()
     }
+  },
+  [HandlerNames.death]: function (actor:GameObject, obj:GameObject, level:Level): void {
+    level.death(actor)
   }
 }
 
-export function handle(actor:GameObject, obj:GameObject, inventory:Inventory):void {
+export function handle(actor:GameObject, obj:GameObject, level:Level):void {
   if (obj.data == null) {
     return
   }
   const objData: TiledBaseObj = obj.data.get("objectData")
-  handlers[objData.handler](actor, obj, inventory)
+  handlers[objData.handler](actor, obj, level)
 }
 
 export type ObjConfig = {
+  visible: boolean
   key: string
   frame: number
   frameBelow: number|null
@@ -51,6 +61,17 @@ export type ObjConfig = {
   handler: HandlerNames
 }
 
+export const BaseConfig = {
+  visible: true,
+  key: "",
+  frame: 0,
+  frameBelow: null,
+  collideable: false,
+  inventoryKeys: [],
+  inventoryValues: [],
+  handler: HandlerNames.none
+}
+
 /**
  * object config
  * naming conventions
@@ -58,11 +79,17 @@ export type ObjConfig = {
  * OBJ_CONFIG_NAME$variant
  */
 
+ export const DEATH$0:ObjConfig = {
+  ...BaseConfig,
+  visible: false,
+  collideable: true,
+  handler: HandlerNames.death
+ }
+
 export const BLUE_FLOWER$1:ObjConfig = {
+  ...BaseConfig,
   key: "testtileset",
   frame: 4,
-  frameBelow: null,
-  collideable: false,
   inventoryKeys: ["blue_flower"],
   inventoryValues: [1],
   handler: HandlerNames.pickup
@@ -74,6 +101,7 @@ export const BLUE_FLOWER$2:ObjConfig = {
 }
 
 export const BLUE_FLOWER_DOOR$1:ObjConfig = {
+  ...BaseConfig,
   key: "testtileset",
   frame: 3,
   frameBelow: 11,
@@ -89,6 +117,7 @@ export const BLUE_FLOWER_DOOR$2:ObjConfig = {
 }
 
 export const CONFIGS:any = {
+  DEATH$0,
   BLUE_FLOWER$1,
   BLUE_FLOWER$2,
   BLUE_FLOWER_DOOR$1,
@@ -101,6 +130,7 @@ export type TiledProp = {
 }
 
 export class TiledBaseObj {
+  visible!: boolean
   key!: string
   frame!: number
   frameBelow!: number|null
@@ -129,6 +159,9 @@ export class TiledBaseObj {
 
     for (let prop of props) {
       switch (prop.name) {
+        case "visible":
+          this.visible = prop.value as boolean
+          break;
         case "key":
           this.key = prop.value as string
           break;

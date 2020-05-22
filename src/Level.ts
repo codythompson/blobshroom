@@ -2,6 +2,7 @@ import Phaser, { GameObjects } from "phaser";
 import Sprite = Phaser.Physics.Arcade.Sprite
 import StaticGroup = Phaser.Physics.Arcade.StaticGroup
 import StaticTilemapLayer = Phaser.Tilemaps.StaticTilemapLayer
+import GameObject = GameObjects.GameObject
 
 import { SpriteController, PlayerController } from "./SpriteController";
 import { Inventory } from "./Inventory";
@@ -44,11 +45,11 @@ export class Level {
 
     const hero = this.hero as Sprite
     scene.physics.add.collider(hero as Sprite, this.collisionLayer as StaticTilemapLayer)
-    scene.physics.add.collider(hero, this.platforms, (hero:GameObjects.GameObject, thingy:GameObjects.GameObject) => {
-      handle(hero, thingy, this.inventory)
+    scene.physics.add.collider(hero, this.platforms, (hero:GameObject, thingy:GameObject) => {
+      handle(hero, thingy, this)
     })
-    scene.physics.add.overlap(hero, this.touchables, (hero:GameObjects.GameObject, thingy:GameObjects.GameObject) => {
-      handle(hero, thingy, this.inventory)
+    scene.physics.add.overlap(hero, this.touchables, (hero:GameObject, thingy:GameObject) => {
+      handle(hero, thingy, this)
     })
   }
 
@@ -68,5 +69,23 @@ export class Level {
     for (let controller of this.controllers) {
       controller.update(elapsed, delta);
     }
+  }
+
+  death(actor:GameObject) {
+    console.log("DEATH!")
+
+    // TODO move to controller
+    const sprite:Sprite = (actor as Sprite)
+    sprite.setAcceleration(0)
+    sprite.setVelocity(0)
+    sprite.tint = 0x00ffff
+
+    // TODO Figure out how to do this
+    // turn off gravity
+
+    this.controllers.forEach(controller => (controller as PlayerController).locked = true)
+
+    // TODO: something more controlled
+    setTimeout(() => window.location.reload(), 1000)
   }
 }

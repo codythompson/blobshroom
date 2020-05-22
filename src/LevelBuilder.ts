@@ -1,4 +1,4 @@
-import Phaser from "phaser"
+import Phaser, { Physics } from "phaser"
 
 import { Level } from "./Level";
 import { Inventory } from "./Inventory";
@@ -182,6 +182,11 @@ export class LevelBuilder {
               let sprite: Phaser.GameObjects.GameObject
               if (baseObj.frameBelow == null) {
                 sprite = physGroup.create(obj.x + obj.width / 2, obj.y + obj.height / 2, `${baseObj.key}_sheet`, baseObj.frame)
+                if (!baseObj.visible) {
+                  const spriteSprite:Physics.Arcade.Sprite = sprite as Physics.Arcade.Sprite
+                  spriteSprite.setVisible(false)
+                  spriteSprite.body.setSize(obj.width, obj.height)
+                }
               } else {
                 const container:Phaser.GameObjects.Container = scene.add.container(obj.x + obj.width / 2, obj.y + obj.height / 2)
                 container.setSize(obj.width, obj.height)
