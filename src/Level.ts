@@ -76,6 +76,7 @@ export class Level {
 
     // TODO move to controller
     const sprite:Sprite = (actor as Sprite)
+    sprite.disableBody()
     sprite.setAcceleration(0)
     sprite.setVelocity(0)
     sprite.tint = 0x00ffff
