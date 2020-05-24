@@ -79,7 +79,7 @@ export class Level {
     sprite.disableBody()
     sprite.setAcceleration(0)
     sprite.setVelocity(0)
-    sprite.tint = 0x00ffff
+    sprite.tint = 0xff0000
 
     // TODO Figure out how to do this
     // turn off gravity
