@@ -206,6 +206,7 @@ export class LevelBuilder {
                 throw new Error(`multiple spawn points in level: "${tilemap.path}"`)
               }
               level.hero = scene.physics.add.sprite(obj.x, obj.y, HERO_ASSET_INFO.name)
+              level.hero.scale = 0.5
               level.hero.tint = HERO_TINT
               level.heroController = level.addPlayerController(level.hero)
               scene.cameras.main.startFollow(level.hero)

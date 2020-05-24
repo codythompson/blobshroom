@@ -15,13 +15,14 @@ const gaem = new Phaser.Game({
   physics: {
     default: "arcade",
     arcade: {
-      gravity: { y: 800 },
+      gravity: { y: 1200 },
       debug: true,
     },
   },
   scene: {
     preload: function () {
       activeLevel = LevelA.build(gaem, "default", inventory);
+      globalize("level", activeLevel);
       activeLevel.preload();
     },
     create: function () {
