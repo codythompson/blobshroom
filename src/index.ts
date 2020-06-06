@@ -7,7 +7,7 @@ import { Inventory } from "./Inventory";
 
 let activeLevel: Level;
 
-const inventory = new Inventory()
+const inventory = new Inventory();
 
 const gaem = new Phaser.Game({
   width: 1200,

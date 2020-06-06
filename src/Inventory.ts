@@ -1,24 +1,24 @@
 export class Inventory {
-  hero: any = {}
+  hero: any = {};
 
-  addToHero(slot:string, value: number): void {
+  addToHero(slot: string, value: number): void {
     if (!(slot in this.hero)) {
-      this.hero[slot] = 0
+      this.hero[slot] = 0;
     }
-    this.hero[slot] += value
+    this.hero[slot] += value;
   }
 
   getFromHero(slot: string): number {
     if (!(slot in this.hero)) {
-      return 0
+      return 0;
     }
-    return this.hero[slot]
+    return this.hero[slot];
   }
 
-  removeFromHero(slot:string, value: number): void {
+  removeFromHero(slot: string, value: number): void {
     if (!(slot in this.hero)) {
-      this.hero[slot] = 0
+      this.hero[slot] = 0;
     }
-    this.hero[slot] -= value
+    this.hero[slot] -= value;
   }
 }

@@ -14,14 +14,14 @@ export class PlayerController extends SpriteController {
   public rightKey: Phaser.Input.Keyboard.Key;
   public jumpKey: Phaser.Input.Keyboard.Key;
 
-  public locked: boolean = false
+  public locked: boolean = false;
 
   private _maxXVel: number = 400;
   private _maxYVel: number = 600;
   public minXVel: number = 300;
 
-  private _lastKeyWasLeft: boolean = false
-  private _jumpReleased: boolean = true
+  private _lastKeyWasLeft: boolean = false;
+  private _jumpReleased: boolean = true;
 
   public xAccel: number = 300;
   // public stopAccel: number = -30
@@ -75,16 +75,20 @@ export class PlayerController extends SpriteController {
     }
 
     if (this.jumpKey.isUp) {
-      this._jumpReleased = true
-    } else if (this.jumpKey.isDown && this.sprite.body.blocked.down && this._jumpReleased) {
-      this._jumpReleased = false
+      this._jumpReleased = true;
+    } else if (
+      this.jumpKey.isDown &&
+      this.sprite.body.blocked.down &&
+      this._jumpReleased
+    ) {
+      this._jumpReleased = false;
       this.sprite.setVelocityY(this.jumpInitialVel);
     }
   }
 
   update(elapsed: number, delta: number): void {
     if (!this.locked) {
-      this.updatePhysicsSetttings()
+      this.updatePhysicsSetttings();
     }
   }
 }
