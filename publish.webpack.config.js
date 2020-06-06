@@ -32,6 +32,11 @@ module.exports = {
 
   mode: 'production',
 
+  performance: {
+    maxAssetSize: 1258000,
+    maxEntrypointSize: 1258000 // 1.2 Mib
+  },
+
   plugins: [
     new CopyWebpackPlugin([
       {

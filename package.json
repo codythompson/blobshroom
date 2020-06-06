@@ -8,7 +8,10 @@
   "scripts": {
     "build": "webpack --config publish.webpack.config.js",
     "dev": "webpack-dev-server",
-    "prep": "git add . && prettier --write src"
+    "pretty": "prettier --write src",
+    "prep": "git add . && yarn pretty",
+    "upload": "aws s3 sync --profile personal --acl public-read ./dist s3://blobshroom/",
+    "deploy": "yarn build && yarn upload"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^5.1.1",
