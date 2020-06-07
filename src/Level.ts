@@ -20,7 +20,7 @@ export class Level {
   public scene: Phaser.Scene | null = null;
   public onPreload: ((level: Level) => void)[] = [];
   public onCreate: ((level: Level) => void)[] = [];
-  public paused: boolean = true
+  public paused: boolean = true;
 
   constructor(
     public gaem: Phaser.Game,

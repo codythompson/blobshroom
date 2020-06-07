@@ -20,12 +20,12 @@ export class EntityController extends SpriteController {
   // public stopAccel: number = -30
   public jumpInitialVel: number = -600;
 
-  stepXVel: number|null = null
-  stepYVel: number|null = null
-  stepXAccel: number|null = null
+  stepXVel: number | null = null;
+  stepYVel: number | null = null;
+  stepXAccel: number | null = null;
 
   constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Arcade.Sprite) {
-    super(scene, sprite)
+    super(scene, sprite);
 
     this.sprite.setMaxVelocity(this._maxXVel);
     this.sprite.setMaxVelocity(this._maxYVel);
@@ -34,19 +34,19 @@ export class EntityController extends SpriteController {
   update(): void {
     if (!this.locked) {
       if (this.stepXAccel != null) {
-        this.sprite.setAccelerationX(this.stepXAccel)
+        this.sprite.setAccelerationX(this.stepXAccel);
       }
       if (this.stepXVel != null) {
-        this.sprite.setVelocityX(this.stepXVel)
+        this.sprite.setVelocityX(this.stepXVel);
       }
       if (this.stepYVel != null) {
-        this.sprite.setVelocityY(this.stepYVel)
+        this.sprite.setVelocityY(this.stepYVel);
       }
     }
 
-    this.stepXAccel = null
-    this.stepXVel = null
-    this.stepYVel = null
+    this.stepXAccel = null;
+    this.stepXVel = null;
+    this.stepYVel = null;
   }
 }
 
@@ -98,8 +98,8 @@ export class PlayerController extends EntityController {
       // no horizontal keys are down
       // this.sprite.setAccelerationX(0);
       // this.sprite.setVelocityX(0);
-      this.stepXAccel = 0
-      this.stepXVel = 0
+      this.stepXAccel = 0;
+      this.stepXVel = 0;
     } else if (directionIsLeft) {
       // left key is down
       if (this.sprite.body.velocity.x > -this.minXVel) {
@@ -107,15 +107,15 @@ export class PlayerController extends EntityController {
         this.stepXVel = -this.minXVel;
       }
       // this.sprite.setAccelerationX(-this.xAccel);
-      this.stepXAccel = -this.xAccel
+      this.stepXAccel = -this.xAccel;
     } else {
       // right key is down
       if (this.sprite.body.velocity.x < this.minXVel) {
         // this.sprite.setVelocityX(this.minXVel);
-        this.stepXVel = this.minXVel
+        this.stepXVel = this.minXVel;
       }
       // this.sprite.setAccelerationX(this.xAccel);
-      this.stepXAccel = this.xAccel
+      this.stepXAccel = this.xAccel;
     }
 
     if (this.jumpKey.isUp) {
@@ -127,7 +127,7 @@ export class PlayerController extends EntityController {
     ) {
       this._jumpReleased = false;
       // this.sprite.setVelocityY(this.jumpInitialVel);
-      this.stepYVel = this.jumpInitialVel
+      this.stepYVel = this.jumpInitialVel;
     }
   }
 
@@ -136,6 +136,6 @@ export class PlayerController extends EntityController {
     if (!this.locked) {
       this.updatePhysicsSetttings();
     }
-    super.update()
+    super.update();
   }
 }

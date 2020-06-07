@@ -29,7 +29,7 @@ export const LevelA: LevelBuilder = LevelBuilder.start()
     playButton.setScrollFactor(0, -1.2);
     playButton.setInteractive();
     playButton.once("pointerup", () => {
-      level.paused = false
+      level.paused = false;
       playButton.destroy();
       scene.sound.play("level1_soundtrack");
     });
