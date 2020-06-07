@@ -12,7 +12,7 @@ export abstract class SpriteController {
 export enum HorDir {
   LEFT = "LEFT",
   RIGHT = "RIGHT",
-  NONE = "NONE"
+  NONE = "NONE",
 }
 
 export class EntityController extends SpriteController {
@@ -30,8 +30,8 @@ export class EntityController extends SpriteController {
   stepYVel: number | null = null;
   stepXAccel: number | null = null;
 
-  currentHorDir: HorDir = HorDir.NONE
-  shouldJump: boolean = false
+  currentHorDir: HorDir = HorDir.NONE;
+  shouldJump: boolean = false;
 
   constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Arcade.Sprite) {
     super(scene, sprite);
@@ -59,14 +59,13 @@ export class EntityController extends SpriteController {
     }
 
     if (this.shouldJump && this.sprite.body.blocked.down) {
-      this.stepYVel = this.jumpInitialVel
+      this.stepYVel = this.jumpInitialVel;
     }
   }
 
-
   update(): void {
     if (!this.locked) {
-      this.updateMotion()
+      this.updateMotion();
 
       if (this.stepXAccel != null) {
         this.sprite.setAccelerationX(this.stepXAccel);
@@ -105,41 +104,35 @@ export class PlayerController extends EntityController {
 
   updateDirection(): void {
     if (this.leftKey.isDown && this.rightKey.isDown) {
-      this.currentHorDir = this._lastKeyWasLeft? HorDir.RIGHT: HorDir.LEFT
+      this.currentHorDir = this._lastKeyWasLeft ? HorDir.RIGHT : HorDir.LEFT;
     } else if (this.leftKey.isDown) {
-      this._lastKeyWasLeft = true
-      this.currentHorDir = HorDir.LEFT
+      this._lastKeyWasLeft = true;
+      this.currentHorDir = HorDir.LEFT;
     } else if (this.rightKey.isDown) {
-      this._lastKeyWasLeft = false
-      this.currentHorDir = HorDir.RIGHT
+      this._lastKeyWasLeft = false;
+      this.currentHorDir = HorDir.RIGHT;
     } else {
-      this.currentHorDir = HorDir.NONE
+      this.currentHorDir = HorDir.NONE;
     }
   }
 
   updateJump(): void {
-    this.shouldJump = false
+    this.shouldJump = false;
     if (this.jumpKey.isUp) {
-      this._jumpReleased = true
-    }
-    else if (
-      this.jumpKey.isDown &&
-      this._jumpReleased
-    ) {
-      this._jumpReleased = false
-      this.shouldJump = true
+      this._jumpReleased = true;
+    } else if (this.jumpKey.isDown && this._jumpReleased) {
+      this._jumpReleased = false;
+      this.shouldJump = true;
     }
   }
 
   update(): void {
     if (!this.locked) {
-      this.updateDirection()
-      this.updateJump()
+      this.updateDirection();
+      this.updateJump();
     }
     super.update();
   }
 }
 
-export class SimpleEnemy extends EntityController {
-
-}
+export class SimpleEnemy extends EntityController {}
