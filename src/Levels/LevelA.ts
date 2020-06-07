@@ -1,10 +1,7 @@
 import Phaser from "phaser";
-import Sprite = Phaser.Physics.Arcade.Sprite;
-import StaticGroup = Phaser.Physics.Arcade.StaticGroup;
 
 import { LevelBuilder } from "../LevelBuilder";
 import { Level } from "../Level";
-import { PlayerController } from "../SpriteController";
 
 export const LevelA: LevelBuilder = LevelBuilder.start()
   .image("playtext", "assets/png/playtext.png")
