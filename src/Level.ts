@@ -20,6 +20,7 @@ export class Level {
   public scene: Phaser.Scene | null = null;
   public onPreload: ((level: Level) => void)[] = [];
   public onCreate: ((level: Level) => void)[] = [];
+  public paused: boolean = true
 
   constructor(
     public gaem: Phaser.Game,
@@ -81,8 +82,10 @@ export class Level {
   }
 
   update(elapsed: number, delta: number) {
-    for (let controller of this.controllers) {
-      controller.update(elapsed, delta);
+    if (!this.paused) {
+      for (let controller of this.controllers) {
+        controller.update(elapsed, delta);
+      }
     }
   }
 

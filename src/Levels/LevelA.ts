@@ -28,14 +28,12 @@ export const LevelA: LevelBuilder = LevelBuilder.start()
       scene.cameras.main.centerY - 420,
       "playtext"
     );
-    const pCtl = level.heroController as PlayerController;
-    pCtl.locked = true;
     playButton.tint = 0xff90ff10;
     playButton.setScrollFactor(0, -1.2);
     playButton.setInteractive();
     playButton.once("pointerup", () => {
+      level.paused = false
       playButton.destroy();
-      pCtl.locked = false;
       scene.sound.play("level1_soundtrack");
     });
   });
