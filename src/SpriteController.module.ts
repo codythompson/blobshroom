@@ -9,6 +9,12 @@ export abstract class SpriteController {
   abstract update(total: number, delta: number): void;
 }
 
+export enum HorDir {
+  LEFT = "LEFT",
+  RIGHT = "RIGHT",
+  NONE = "NONE"
+}
+
 export class EntityController extends SpriteController {
   public locked: boolean = false;
 
@@ -24,6 +30,9 @@ export class EntityController extends SpriteController {
   stepYVel: number | null = null;
   stepXAccel: number | null = null;
 
+  currentHorDir: HorDir = HorDir.NONE
+  shouldJump: boolean = false
+
   constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Arcade.Sprite) {
     super(scene, sprite);
 
@@ -31,8 +40,34 @@ export class EntityController extends SpriteController {
     this.sprite.setMaxVelocity(this._maxYVel);
   }
 
+  updateMotion() {
+    if (this.currentHorDir == HorDir.NONE) {
+      this.stepXAccel = 0;
+      this.stepXVel = 0;
+    } else if (this.currentHorDir == HorDir.LEFT) {
+      // left key is down
+      if (this.sprite.body.velocity.x > -this.minXVel) {
+        this.stepXVel = -this.minXVel;
+      }
+      this.stepXAccel = -this.xAccel;
+    } else {
+      // right key is down
+      if (this.sprite.body.velocity.x < this.minXVel) {
+        this.stepXVel = this.minXVel;
+      }
+      this.stepXAccel = this.xAccel;
+    }
+
+    if (this.shouldJump && this.sprite.body.blocked.down) {
+      this.stepYVel = this.jumpInitialVel
+    }
+  }
+
+
   update(): void {
     if (!this.locked) {
+      this.updateMotion()
+
       if (this.stepXAccel != null) {
         this.sprite.setAccelerationX(this.stepXAccel);
       }
@@ -55,18 +90,8 @@ export class PlayerController extends EntityController {
   public rightKey: Phaser.Input.Keyboard.Key;
   public jumpKey: Phaser.Input.Keyboard.Key;
 
-  // public locked: boolean = false;
-
-  // private _maxXVel: number = 400;
-  // private _maxYVel: number = 600;
-  // public minXVel: number = 300;
-
   private _lastKeyWasLeft: boolean = false;
   private _jumpReleased: boolean = true;
-
-  // public xAccel: number = 300;
-  // // public stopAccel: number = -30
-  // public jumpInitialVel: number = -600;
 
   constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Arcade.Sprite) {
     super(scene, sprite);
@@ -78,64 +103,43 @@ export class PlayerController extends EntityController {
     this.jumpKey = keyboard.addKey("SPACE");
   }
 
-  directionIsLeft(): boolean | null {
+  updateDirection(): void {
     if (this.leftKey.isDown && this.rightKey.isDown) {
-      return !this._lastKeyWasLeft;
+      this.currentHorDir = this._lastKeyWasLeft? HorDir.RIGHT: HorDir.LEFT
     } else if (this.leftKey.isDown) {
-      this._lastKeyWasLeft = true;
-      return true;
+      this._lastKeyWasLeft = true
+      this.currentHorDir = HorDir.LEFT
     } else if (this.rightKey.isDown) {
-      this._lastKeyWasLeft = false;
-      return false;
+      this._lastKeyWasLeft = false
+      this.currentHorDir = HorDir.RIGHT
     } else {
-      return null;
+      this.currentHorDir = HorDir.NONE
     }
   }
 
-  updatePhysicsSetttings() {
-    const directionIsLeft: boolean | null = this.directionIsLeft();
-    if (directionIsLeft == null) {
-      // no horizontal keys are down
-      // this.sprite.setAccelerationX(0);
-      // this.sprite.setVelocityX(0);
-      this.stepXAccel = 0;
-      this.stepXVel = 0;
-    } else if (directionIsLeft) {
-      // left key is down
-      if (this.sprite.body.velocity.x > -this.minXVel) {
-        // this.sprite.setVelocityX(-this.minXVel);
-        this.stepXVel = -this.minXVel;
-      }
-      // this.sprite.setAccelerationX(-this.xAccel);
-      this.stepXAccel = -this.xAccel;
-    } else {
-      // right key is down
-      if (this.sprite.body.velocity.x < this.minXVel) {
-        // this.sprite.setVelocityX(this.minXVel);
-        this.stepXVel = this.minXVel;
-      }
-      // this.sprite.setAccelerationX(this.xAccel);
-      this.stepXAccel = this.xAccel;
-    }
-
+  updateJump(): void {
+    this.shouldJump = false
     if (this.jumpKey.isUp) {
-      this._jumpReleased = true;
-    } else if (
+      this._jumpReleased = true
+    }
+    else if (
       this.jumpKey.isDown &&
-      this.sprite.body.blocked.down &&
       this._jumpReleased
     ) {
-      this._jumpReleased = false;
-      // this.sprite.setVelocityY(this.jumpInitialVel);
-      this.stepYVel = this.jumpInitialVel;
+      this._jumpReleased = false
+      this.shouldJump = true
     }
   }
 
-  // update(elapsed: number, delta: number): void {
   update(): void {
     if (!this.locked) {
-      this.updatePhysicsSetttings();
+      this.updateDirection()
+      this.updateJump()
     }
     super.update();
   }
+}
+
+export class SimpleEnemy extends EntityController {
+
 }

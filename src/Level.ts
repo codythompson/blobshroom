@@ -4,7 +4,7 @@ import StaticGroup = Phaser.Physics.Arcade.StaticGroup;
 import StaticTilemapLayer = Phaser.Tilemaps.StaticTilemapLayer;
 import GameObject = GameObjects.GameObject;
 
-import { SpriteController, PlayerController } from "./SpriteController";
+import { SpriteController, PlayerController } from "./SpriteController.module";
 import { Inventory } from "./Inventory";
 import { handle } from "./TileObjects";
 
