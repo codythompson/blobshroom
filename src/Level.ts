@@ -4,13 +4,18 @@ import StaticGroup = Phaser.Physics.Arcade.StaticGroup;
 import StaticTilemapLayer = Phaser.Tilemaps.StaticTilemapLayer;
 import GameObject = GameObjects.GameObject;
 
-import { SpriteController, PlayerController } from "./SpriteController.module";
+import {
+  SpriteController,
+  PlayerController,
+  EntityController,
+} from "./SpriteControllers";
 import { Inventory } from "./Inventory";
-import { handle } from "./TileObjects";
+import { handle } from "./CollisionHandlers";
 
 export class Level {
   public hero: Sprite | null = null;
   public heroController: PlayerController | null = null;
+  public entities: EntityController[] = [];
   public tilemap: Phaser.Tilemaps.Tilemap | null = null;
   public tileset: Phaser.Tilemaps.Tileset | null = null;
   public collisionLayer: StaticTilemapLayer | null = null;
@@ -67,6 +72,13 @@ export class Level {
         handle(hero, thingy, this);
       }
     );
+
+    const entSprites: GameObject[] = this.entities.map((ent) => ent.sprite);
+    scene.physics.add.collider(entSprites, this.platforms);
+    scene.physics.add.collider(
+      entSprites,
+      this.collisionLayer as StaticTilemapLayer
+    );
   }
 
   addPlayerController(sprite: Sprite): PlayerController {
@@ -79,6 +91,11 @@ export class Level {
   // TODO move this to level builder
   addPlatform(x: number, y: number, texture: string): any {
     return this.platforms?.create(x, y, texture);
+  }
+
+  addEntity(ent: EntityController) {
+    this.controllers.push(ent);
+    this.entities.push(ent);
   }
 
   update(elapsed: number, delta: number) {
@@ -102,9 +119,10 @@ export class Level {
     // TODO Figure out how to do this
     // turn off gravity
 
-    this.controllers.forEach(
-      (controller) => ((controller as PlayerController).locked = true)
-    );
+    this.paused = true;
+    // this.controllers.forEach(
+    //   (controller) => ((controller as PlayerController).locked = true)
+    // );
 
     // TODO: something more controlled
     setTimeout(() => window.location.reload(), 1000);

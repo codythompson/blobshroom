@@ -2,6 +2,7 @@ import Phaser from "phaser";
 
 import { LevelBuilder } from "../LevelBuilder";
 import { Level } from "../Level";
+import { SimpleEnemy, HorDir } from "../SpriteControllers";
 
 export const LevelA: LevelBuilder = LevelBuilder.start()
   .image("playtext", "assets/png/playtext.png")
@@ -33,4 +34,13 @@ export const LevelA: LevelBuilder = LevelBuilder.start()
       playButton.destroy();
       scene.sound.play("level1_soundtrack");
     });
+
+    const tsprite = scene.physics.add.sprite(512, 40, "heroblob");
+    tsprite.scale = 0.5;
+    tsprite.tint = 0xffffaa00;
+    const temy = new SimpleEnemy(scene, tsprite);
+    temy.maxXVel = 300;
+    temy.minXVel = 100;
+    temy.currentHorDir = HorDir.RIGHT;
+    level.addEntity(temy);
   });
