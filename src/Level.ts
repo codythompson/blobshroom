@@ -4,11 +4,7 @@ import StaticGroup = Phaser.Physics.Arcade.StaticGroup;
 import StaticTilemapLayer = Phaser.Tilemaps.StaticTilemapLayer;
 import GameObject = GameObjects.GameObject;
 
-import {
-  SpriteController,
-  PlayerController,
-  EntityController,
-} from "./SpriteControllers";
+import { PlayerController, EntityController } from "./SpriteControllers";
 import { Inventory } from "./Inventory";
 import { handle } from "./CollisionHandlers";
 
@@ -19,7 +15,6 @@ export class Level {
   public tilemap: Phaser.Tilemaps.Tilemap | null = null;
   public tileset: Phaser.Tilemaps.Tileset | null = null;
   public collisionLayer: StaticTilemapLayer | null = null;
-  public controllers: SpriteController[] = [];
   public platforms: StaticGroup | null = null;
   public touchables: StaticGroup | null = null;
   public scene: Phaser.Scene | null = null;
@@ -53,38 +48,31 @@ export class Level {
       func(this);
     }
 
-    const hero = this.hero as Sprite;
-    scene.physics.add.collider(
-      hero as Sprite,
-      this.collisionLayer as StaticTilemapLayer
-    );
-    scene.physics.add.collider(
-      hero,
-      this.platforms,
-      (hero: GameObject, thingy: GameObject) => {
-        handle(hero, thingy, this);
-      }
-    );
-    scene.physics.add.overlap(
-      hero,
-      this.touchables,
-      (hero: GameObject, thingy: GameObject) => {
-        handle(hero, thingy, this);
-      }
-    );
-
     const entSprites: GameObject[] = this.entities.map((ent) => ent.sprite);
-    scene.physics.add.collider(entSprites, this.platforms);
+    scene.physics.add.collider(
+      entSprites,
+      this.platforms,
+      (entity: GameObject, thingy: GameObject) => {
+        handle(entity, thingy, this);
+      }
+    );
     scene.physics.add.collider(
       entSprites,
       this.collisionLayer as StaticTilemapLayer
+    );
+    scene.physics.add.overlap(
+      entSprites,
+      this.touchables,
+      (entity: GameObject, thingy: GameObject) => {
+        handle(entity, thingy, this);
+      }
     );
   }
 
   addPlayerController(sprite: Sprite): PlayerController {
     const scene: Phaser.Scene = this.getScene();
     const controller = new PlayerController(scene, sprite);
-    this.controllers.push(controller);
+    this.add(controller);
     return controller;
   }
 
@@ -93,22 +81,32 @@ export class Level {
     return this.platforms?.create(x, y, texture);
   }
 
-  addEntity(ent: EntityController) {
-    this.controllers.push(ent);
+  add(ent: EntityController) {
     this.entities.push(ent);
   }
 
+  find(sprite: Sprite): EntityController | undefined {
+    return this.entities.find((ent) => ent.sprite == sprite);
+  }
+
+  destroy(entity: EntityController) {
+    this.entities.splice(this.entities.indexOf(entity), 1);
+    entity.sprite.destroy();
+  }
+
+  /*
+   * Lifecycle functions
+   */
+
   update(elapsed: number, delta: number) {
     if (!this.paused) {
-      for (let controller of this.controllers) {
-        controller.update(elapsed, delta);
+      for (let entity of this.entities) {
+        entity.update();
       }
     }
   }
 
   death(actor: GameObject) {
-    console.log("DEATH!");
-
     // TODO move to controller
     const sprite: Sprite = actor as Sprite;
     sprite.disableBody();
@@ -116,15 +114,17 @@ export class Level {
     sprite.setVelocity(0);
     sprite.tint = 0xff0000;
 
-    // TODO Figure out how to do this
-    // turn off gravity
+    const ent: EntityController = this.find(sprite) as EntityController;
+    ent.locked = true;
 
-    this.paused = true;
-    // this.controllers.forEach(
-    //   (controller) => ((controller as PlayerController).locked = true)
-    // );
+    if (actor == this.hero) {
+      console.log("YOU DIED!!!!");
+      this.paused = true;
+      setTimeout(() => window.location.reload(), 1000);
+    } else {
+      setTimeout(() => this.destroy(ent), 1000);
+    }
 
     // TODO: something more controlled
-    setTimeout(() => window.location.reload(), 1000);
   }
 }

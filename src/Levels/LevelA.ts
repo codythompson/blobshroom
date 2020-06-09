@@ -42,5 +42,5 @@ export const LevelA: LevelBuilder = LevelBuilder.start()
     temy.maxXVel = 300;
     temy.minXVel = 100;
     temy.currentHorDir = HorDir.RIGHT;
-    level.addEntity(temy);
+    level.add(temy);
   });

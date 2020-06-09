@@ -22,7 +22,6 @@ export enum EntityType {
 }
 
 export class EntityController extends SpriteController {
-  public type: EntityType = EntityType.ENTITY;
   public locked: boolean = false;
 
   private _maxXVel: number = 400;
@@ -45,7 +44,16 @@ export class EntityController extends SpriteController {
 
     this.sprite.setMaxVelocity(this._maxXVel, this._maxYVel);
     this.sprite.setDataEnabled();
-    this.sprite.data.set("collistionType", this.type);
+
+    this.type = EntityType.ENTITY;
+  }
+
+  set type(type: EntityType) {
+    this.sprite.data.set("type", type);
+  }
+
+  get type(): EntityType {
+    return this.sprite.data.get("type");
   }
 
   set maxXVel(newMax: number) {
@@ -103,7 +111,6 @@ export class EntityController extends SpriteController {
 }
 
 export class PlayerController extends EntityController {
-  public type = EntityType.PLAYER;
   public leftKey: Phaser.Input.Keyboard.Key;
   public rightKey: Phaser.Input.Keyboard.Key;
   public jumpKey: Phaser.Input.Keyboard.Key;
@@ -113,6 +120,7 @@ export class PlayerController extends EntityController {
 
   constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Arcade.Sprite) {
     super(scene, sprite);
+    this.type = EntityType.PLAYER;
 
     const keyboard = scene.input.keyboard;
 
@@ -155,5 +163,8 @@ export class PlayerController extends EntityController {
 }
 
 export class SimpleEnemy extends EntityController {
-  type = EntityType.ENEMY;
+  constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Arcade.Sprite) {
+    super(scene, sprite);
+    this.type = EntityType.ENEMY;
+  }
 }
