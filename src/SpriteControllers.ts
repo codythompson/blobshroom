@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { Level } from "./Level";
 
 export abstract class SpriteController {
   constructor(
@@ -39,6 +40,9 @@ export class EntityController extends SpriteController {
   currentHorDir: HorDir = HorDir.NONE;
   shouldJump: boolean = false;
 
+  // TODO add to a collision group in Level
+  public overlapsWith: EntityType[] = []
+
   constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Arcade.Sprite) {
     super(scene, sprite);
 
@@ -65,6 +69,8 @@ export class EntityController extends SpriteController {
     this._maxYVel = newMax;
     this.sprite.setMaxVelocity(this._maxXVel, this._maxYVel);
   }
+
+  handleOverlap(other: EntityController, level: Level) {  }
 
   updateMotion() {
     if (this.currentHorDir == HorDir.NONE) {

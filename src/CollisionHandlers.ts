@@ -3,7 +3,6 @@ import GameObject = Phaser.GameObjects.GameObject;
 import { Level } from "./Level";
 import { Inventory } from "./Inventory";
 import { TiledBaseObj } from "./TileObjects";
-import { EntityType } from "./SpriteControllers";
 
 export enum HandlerNames {
   none = "none",
