@@ -1,10 +1,11 @@
 import Phaser, { GameObjects } from "phaser";
 import Sprite = Phaser.Physics.Arcade.Sprite;
 import StaticGroup = Phaser.Physics.Arcade.StaticGroup;
+import Group = Phaser.Physics.Arcade.Group
 import StaticTilemapLayer = Phaser.Tilemaps.StaticTilemapLayer;
 import GameObject = GameObjects.GameObject;
 
-import { PlayerController, EntityController } from "./SpriteControllers";
+import { PlayerController, EntityController, EntityType } from "./SpriteControllers";
 import { Inventory } from "./Inventory";
 import { handle } from "./CollisionHandlers";
 
@@ -17,6 +18,8 @@ export class Level {
   public collisionLayer: StaticTilemapLayer | null = null;
   public platforms: StaticGroup | null = null;
   public touchables: StaticGroup | null = null;
+  public entityGroups: Record<string, Group> = {};
+  public overlappingGroups: Record<string, Group> = {};
   public scene: Phaser.Scene | null = null;
   public onPreload: ((level: Level) => void)[] = [];
   public onCreate: ((level: Level) => void)[] = [];
@@ -67,6 +70,13 @@ export class Level {
         handle(entity, thingy, this);
       }
     );
+    for(let key in this.overlappingGroups) {
+      const group:Group = this.overlappingGroups[key]
+      const entGroup:Group = this.entityGroups[key]
+      scene.physics.add.overlap(entGroup, group, (entity:GameObject, groupEntity: GameObject) => {
+        console.log("TODO: hook this handler up to something. Think about adding a overlapStart and End event (need to manully program)")
+      })
+    }
   }
 
   addPlayerController(sprite: Sprite): PlayerController {
@@ -81,8 +91,24 @@ export class Level {
     return this.platforms?.create(x, y, texture);
   }
 
+  addEntToGroup(groups: Record<string, Group>, ent: EntityController, type: EntityType) {
+    let group:Group
+    if (type in groups) {
+      group = groups[type]
+    }
+    else {
+      group = this.getScene().physics.add.group()
+      groups[type] = group
+    }
+    group.add(ent.sprite)
+  }
+
   add(ent: EntityController) {
     this.entities.push(ent);
+    this.addEntToGroup(this.entityGroups, ent, ent.type)
+    for (let type of ent.overlapsWith) {
+      this.addEntToGroup(this.overlappingGroups, ent, type)
+    }
   }
 
   find(sprite: Sprite): EntityController | undefined {

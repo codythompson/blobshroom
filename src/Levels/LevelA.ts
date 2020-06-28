@@ -2,7 +2,7 @@ import Phaser from "phaser";
 
 import { LevelBuilder } from "../LevelBuilder";
 import { Level } from "../Level";
-import { SimpleEnemy, HorDir } from "../SpriteControllers";
+import { SimpleEnemy, HorDir, EntityType } from "../SpriteControllers";
 
 export const LevelA: LevelBuilder = LevelBuilder.start()
   .image("playtext", "assets/png/playtext.png")
@@ -42,5 +42,6 @@ export const LevelA: LevelBuilder = LevelBuilder.start()
     temy.maxXVel = 300;
     temy.minXVel = 100;
     temy.currentHorDir = HorDir.RIGHT;
+    temy.overlapsWith.push(EntityType.PLAYER)
     level.add(temy);
   });
